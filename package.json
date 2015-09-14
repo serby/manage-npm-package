@@ -1,7 +1,7 @@
 {
   "name": "manage-npm-package",
   "description": "Programmatically manage package.json properties.",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "dependencies": {
     "lodash.clone": "^3.0.3",
     "mc-logger": "0.0.0",
