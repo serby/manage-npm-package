@@ -90,6 +90,16 @@ describe('manage-npm-package', function () {
         done()
       })
     })
+    it('should append new script using default with empty object', function (done) {
+      var managePackageJson = new ManagePackageJson(__dirname + '/fixture/', { logger: logSpy() })
+      managePackageJson.load(function (err) {
+        assert.equal(err, undefined)
+        managePackageJson.package.scripts.linty = 'other-linter .'
+        managePackageJson.addScript('linty', 'my-linter .', {})
+        assert.equal(managePackageJson.package.scripts.linty, 'other-linter . && my-linter .')
+        done()
+      })
+    })
   })
 
   describe('#addDependency()', function () {

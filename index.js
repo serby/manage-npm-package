@@ -1,6 +1,7 @@
 var fs = require('fs')
   , join = require('path').join
   , sortKeys = require('sort-keys')
+  , assign = require('lodash.assign')
 
 module.exports = ManagePackageJson
 
@@ -12,7 +13,7 @@ function ManagePackageJson (path, options) {
 
 ManagePackageJson.prototype.addScript = function (name, command, options) {
   if (!this.package) throw new Error('package.json not loaded')
-  if (!options) options = { joinOperator: '&&', overwrite: false }
+  options = assign({ joinOperator: '&&', overwrite: false }, options)
   if (this.package.scripts[name] === undefined) {
     this.package.scripts[name] = command
   } else if (options.overwrite) {
@@ -24,7 +25,7 @@ ManagePackageJson.prototype.addScript = function (name, command, options) {
 
 ManagePackageJson.prototype.addDependency = function (name, version, options) {
   if (!this.package) throw new Error('package.json not loaded')
-  if (!options) options = {}
+  options = assign({ dev: false, dedupe: false }, options)
   if (options.dev) {
     this.package.devDependencies[name] = version
     this.logger.info('"' + name + '": "' + version + '" added to "devDependencies"')
