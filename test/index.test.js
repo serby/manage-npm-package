@@ -29,6 +29,7 @@ describe('manage-npm-package', function () {
       })
     })
   })
+
   describe('#package', function () {
     it('should add properties', function (done) {
       var managePackageJson = new ManagePackageJson(__dirname + '/fixture/', { logger: logSpy() })
@@ -44,6 +45,48 @@ describe('manage-npm-package', function () {
       managePackageJson.load(function () {
         managePackageJson.package.version = '1.0.0'
         assert.equal(managePackageJson.package.version, '1.0.0')
+        done()
+      })
+    })
+  })
+
+  describe('#addScript', function () {
+    it('should add new script if doesn\'t exist with the default options', function (done) {
+      var managePackageJson = new ManagePackageJson(__dirname + '/fixture/', { logger: logSpy() })
+      managePackageJson.load(function (err) {
+        assert.equal(err, undefined)
+        managePackageJson.addScript('linty', 'my-linter .')
+        assert.equal(managePackageJson.package.scripts.linty, 'my-linter .')
+        done()
+      })
+    })
+    it('should append new script if it exists using default options', function (done) {
+      var managePackageJson = new ManagePackageJson(__dirname + '/fixture/', { logger: logSpy() })
+      managePackageJson.load(function (err) {
+        assert.equal(err, undefined)
+        managePackageJson.package.scripts.linty = 'other-linter .'
+        managePackageJson.addScript('linty', 'my-linter .')
+        assert.equal(managePackageJson.package.scripts.linty, 'other-linter . && my-linter .')
+        done()
+      })
+    })
+    it('should overwrite new script if it exists and `overwrite` is set', function (done) {
+      var managePackageJson = new ManagePackageJson(__dirname + '/fixture/', { logger: logSpy() })
+      managePackageJson.load(function (err) {
+        assert.equal(err, undefined)
+        managePackageJson.package.scripts.linty = 'other-linter .'
+        managePackageJson.addScript('linty', 'my-linter .', { overwrite: true })
+        assert.equal(managePackageJson.package.scripts.linty, 'my-linter .')
+        done()
+      })
+    })
+    it('should append new script using custom `joinOperator`', function (done) {
+      var managePackageJson = new ManagePackageJson(__dirname + '/fixture/', { logger: logSpy() })
+      managePackageJson.load(function (err) {
+        assert.equal(err, undefined)
+        managePackageJson.package.scripts.linty = 'other-linter .'
+        managePackageJson.addScript('linty', 'my-linter .', { joinOperator: '||' })
+        assert.equal(managePackageJson.package.scripts.linty, 'other-linter . || my-linter .')
         done()
       })
     })

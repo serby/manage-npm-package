@@ -10,6 +10,18 @@ function ManagePackageJson (path, options) {
   this.logger = options && options.logger || console
 }
 
+ManagePackageJson.prototype.addScript = function (name, command, options) {
+  if (!this.package) throw new Error('package.json not loaded')
+  if (!options) options = { joinOperator: '&&', overwrite: false }
+  if (this.package.scripts[name] === undefined) {
+    this.package.scripts[name] = command
+  } else if (options.overwrite) {
+    this.package.scripts[name] = command
+  } else {
+    this.package.scripts[name] += ' ' + options.joinOperator + ' ' + command
+  }
+}
+
 ManagePackageJson.prototype.addDependency = function (name, version, options) {
   if (!this.package) throw new Error('package.json not loaded')
   if (!options) options = {}
